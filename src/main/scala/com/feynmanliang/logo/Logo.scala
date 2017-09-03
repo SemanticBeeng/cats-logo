@@ -1,10 +1,13 @@
 package com.feynmanliang.logo
 
-import cats.data.Coproduct
-import cats.free.{Free, Inject}
+import cats.data.EitherK
+import cats.free.Free
+import cats.InjectK
+
+import scala.language.higherKinds
 
 object Logo {
-  type LogoApp[A] = Coproduct[Instruction, PencilInstruction, A]
+  type LogoApp[A] = EitherK[Instruction, PencilInstruction, A]
 
   sealed trait Instruction[A]
   case class Forward(position: Position, length: Int) extends Instruction[Position]
@@ -23,7 +26,7 @@ object Logo {
   }
 
   object dsl {
-    class Moves[F[_]](implicit I: Inject[Instruction, F]) {
+    class Moves[F[_]](implicit I: InjectK[Instruction, F]) {
       def forward(pos: Position, l: Int): Free[F, Position] = Free.inject[Instruction, F](Forward(pos, l))
       def backward(pos: Position, l: Int): Free[F, Position] = Free.inject[Instruction, F](Backward(pos, l))
       def left(pos: Position, l: Degree): Free[F, Position] = Free.inject[Instruction, F](RotateLeft(pos, l))
@@ -32,16 +35,16 @@ object Logo {
     }
 
     object Moves {
-      implicit def moves[F[_]](implicit I: Inject[Instruction, F]): Moves[F] = new Moves[F]
+      implicit def moves[F[_]](implicit I: InjectK[Instruction, F]): Moves[F] = new Moves[F]
     }
 
-    class PencilActions[F[_]](implicit I: Inject[PencilInstruction, F]) {
+    class PencilActions[F[_]](implicit I: InjectK[PencilInstruction, F]) {
       def pencilUp(pos: Position): Free[F, Unit] = Free.inject[PencilInstruction, F](PencilUp(pos))
       def pencilDown(pos: Position): Free[F, Unit] = Free.inject[PencilInstruction, F](PencilDown(pos))
     }
 
     object PencilActions {
-      implicit def pencilActions[F[_]](implicit I: Inject[PencilInstruction, F]): PencilActions[F] = new PencilActions[F]
+      implicit def pencilActions[F[_]](implicit I: InjectK[PencilInstruction, F]): PencilActions[F] = new PencilActions[F]
     }
   }
 }

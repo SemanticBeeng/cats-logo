@@ -4,10 +4,15 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.7"
 )
 
+val catsVersion = "1.0.0-MF"
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "cats-logo",
-    libraryDependencies += "org.typelevel" %% "cats" % "0.6.0"
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % catsVersion,
+      "org.typelevel" %% "cats-laws" % catsVersion,
+      "org.typelevel" %% "cats-free" % catsVersion
+    )
   )
 
