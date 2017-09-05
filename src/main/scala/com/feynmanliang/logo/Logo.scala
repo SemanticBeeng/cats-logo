@@ -6,8 +6,15 @@ import cats.InjectK
 
 import scala.language.higherKinds
 
-object Logo {
-  type LogoApp[A] = EitherK[Instruction, PencilInstruction, A]
+trait Base {
+
+  case class Position(x: Double, y: Double, heading: Degree)
+  case class Degree(private val d: Int) {
+    val value = d % 360
+  }
+}
+
+trait LogoInstructions extends Base {
 
   sealed trait Instruction[A]
   case class Forward(position: Position, length: Int) extends Instruction[Position]
@@ -15,15 +22,18 @@ object Logo {
   case class RotateLeft(position: Position, length: Degree) extends Instruction[Position]
   case class RotateRight(position: Position, length: Degree) extends Instruction[Position]
   case class ShowPosition(position: Position) extends Instruction[Unit]
+}
+
+trait LogoPencilInstructions extends Base {
 
   sealed trait PencilInstruction[A]
   case class PencilUp(position: Position) extends PencilInstruction[Unit]
   case class PencilDown(position: Position) extends PencilInstruction[Unit]
+}
 
-  case class Position(x: Double, y: Double, heading: Degree)
-  case class Degree(private val d: Int) {
-    val value = d % 360
-  }
+object Logo extends LogoInstructions with LogoPencilInstructions {
+
+  type LogoApp[A] = EitherK[Instruction, PencilInstruction, A]
 
   object dsl {
     class Moves[F[_]](implicit I: InjectK[Instruction, F]) {
