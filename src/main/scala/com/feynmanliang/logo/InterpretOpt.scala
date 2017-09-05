@@ -5,7 +5,9 @@ import cats.~>
 import Logo._
 
 object InterpretOpt extends (Instruction ~> Option) {
+  import Base._
   import Computations._
+
   val nonNegative: (Position) => Option[Position] = (p: Position) => {
     if (p.x >= 0 && p.y >= 0) Some(p) else None
   }

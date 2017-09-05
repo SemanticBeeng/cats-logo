@@ -3,6 +3,7 @@ package com.feynmanliang.logo
 import scala.math
 
 import Logo._
+import Base._
 
 object Computations {
   def forward(pos: Position, l: Int): Position = pos.copy(

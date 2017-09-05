@@ -5,6 +5,8 @@ import cats.implicits._
 import cats.free.Free
 
 object App {
+
+  import Base._
   import Logo._
   import Logo.dsl._
 

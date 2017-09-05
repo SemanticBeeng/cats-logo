@@ -13,8 +13,10 @@ trait Base {
     val value = d % 360
   }
 }
+object Base extends Base
 
-trait LogoInstructions extends Base {
+trait LogoInstructions {
+  import Base._
 
   sealed trait Instruction[A]
   case class Forward(position: Position, length: Int) extends Instruction[Position]
@@ -24,7 +26,8 @@ trait LogoInstructions extends Base {
   case class ShowPosition(position: Position) extends Instruction[Unit]
 }
 
-trait LogoPencilInstructions extends Base {
+trait LogoPencilInstructions {
+  import Base._
 
   sealed trait PencilInstruction[A]
   case class PencilUp(position: Position) extends PencilInstruction[Unit]
@@ -32,6 +35,8 @@ trait LogoPencilInstructions extends Base {
 }
 
 object Logo extends LogoInstructions with LogoPencilInstructions {
+
+  import Base._
 
   type LogoApp[A] = EitherK[Instruction, PencilInstruction, A]
 
