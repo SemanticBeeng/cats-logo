@@ -4,10 +4,10 @@ import cats.{Id,~>}
 import cats.implicits._
 import cats.free.Free
 
-import Logo._
-import Logo.dsl._
-
 object App {
+  import Logo._
+  import Logo.dsl._
+
   def program(start: Position)(implicit M: Moves[LogoApp], P: PencilActions[LogoApp]): Free[LogoApp, Unit] = {
     import M._, P._
     for {
